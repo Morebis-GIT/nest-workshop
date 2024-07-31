@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { migrations } from './migrations';
+import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { migrations } from './migrations';
       migrationsRun: true,
     }),
     UsersModule,
+    PostModule,
   ],
   controllers: [],
   providers: [],

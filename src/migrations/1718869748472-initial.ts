@@ -28,6 +28,48 @@ export class Initial1718869748472 implements MigrationInterface {
           {
             name: 'created_at',
             type: 'timestamptz',
+            default: 'now()',
+          },
+          {
+            name: 'updated_at',
+            type: 'timestamptz',
+            default: 'now()',
+          },
+          {
+            name: 'deleted_at',
+            type: 'timestamptz',
+            default: 'now()',
+          },
+        ],
+      }),
+      true,
+    );
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'posts',
+        columns: [
+          {
+            name: 'id',
+            type: 'int',
+            isPrimary: true,
+            isGenerated: true,
+          },
+          {
+            name: 'description',
+            type: 'varchar',
+          },
+          {
+            name: 'status',
+            type: 'varchar',
+          },
+          {
+            name: 'created_by',
+            type: 'uuid',
+          },
+          {
+            name: 'created_at',
+            type: 'timestamptz',
             default: 'CURRENT_TIMESTAMP',
           },
           {
@@ -35,17 +77,58 @@ export class Initial1718869748472 implements MigrationInterface {
             type: 'timestamptz',
             default: 'CURRENT_TIMESTAMP',
           },
+        ],
+        foreignKeys: [
           {
-            name: 'deleted_at',
-            type: 'timestamptz',
-            default: 'CURRENT_TIMESTAMP',
+            columnNames: ['created_by'],
+            referencedColumnNames: ['id'],
+            referencedTableName: 'users',
+            onDelete: 'CASCADE',
           },
         ],
       }),
+      true,
+    );
+
+    await queryRunner.createTable(
+      new Table({
+        name: 'post_tagged_user',
+        columns: [
+          {
+            name: 'id',
+            type: 'int',
+            isPrimary: true,
+            isGenerated: true,
+          },
+          {
+            name: 'user_id',
+            type: 'uuid',
+          },
+          {
+            name: 'post_id',
+            type: 'int',
+          },
+        ],
+        foreignKeys: [
+          {
+            columnNames: ['user_id'],
+            referencedTableName: 'users',
+            referencedColumnNames: ['id'],
+          },
+          {
+            columnNames: ['post_id'],
+            referencedTableName: 'posts',
+            referencedColumnNames: ['id'],
+          },
+        ],
+      }),
+      true,
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable('post_tagged_user', true, true, true);
+    await queryRunner.dropTable('posts', true, true, true);
     await queryRunner.dropTable('users', true, true, true);
   }
 }
