@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiQuery,
@@ -19,16 +21,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { PostQueryParamsDto } from './dto/post-query-params.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { AuthUser } from '../decorators/user.decorator';
+import { LoggedUser } from '../auth/models/user';
 
+@UseGuards(AuthGuard('jwt'))
+@ApiBearerAuth()
 @ApiTags('Posts')
-@ApiResponse({
-  status: 200,
-  description: 'OK',
-})
 @ApiResponse({ status: 400, description: 'Bad request' })
 @ApiResponse({ status: 401, description: 'Unauthorized' })
 @ApiResponse({ status: 500, description: 'Internal server error' })
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
@@ -39,7 +42,11 @@ export class PostController {
   })
   @ApiBody({ type: CreatePostDto })
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
+  create(@Body() createPostDto: CreatePostDto, @AuthUser() user: LoggedUser) {
+    // Here we can access the logged in user object
+    // You could pass it next to the service layer
+    console.log(user);
+
     return this.postService.create(createPostDto);
   }
 

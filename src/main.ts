@@ -7,6 +7,7 @@ import {
   SwaggerDocumentOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
+import { HttpExceptionFilter } from './helpers/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,6 +20,8 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     exposedHeaders: ['Origin-Agent-Cluster'],
   });
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Pipes
   app.useGlobalPipes(
@@ -42,7 +45,11 @@ async function bootstrap() {
   };
 
   const document = SwaggerModule.createDocument(app, config, options);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('swagger', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
 
   await app.listen(process.env.PORT || 3000);
 }
