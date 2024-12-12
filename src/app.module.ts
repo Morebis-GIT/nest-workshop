@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { migrations } from './migrations';
+import { AuthModule } from './auth/auth.module';
 import { PostModule } from './post/post.module';
 
 @Module({
@@ -24,10 +25,9 @@ import { PostModule } from './post/post.module';
       migrationsTableName: `migrations`,
       migrationsRun: true,
     }),
+    AuthModule,
     UsersModule,
     PostModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

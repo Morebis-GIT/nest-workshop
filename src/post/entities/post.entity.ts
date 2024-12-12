@@ -6,10 +6,8 @@ import {
   JoinColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToMany,
 } from 'typeorm';
 import { User } from './../../users/entities/user.entity';
-import { PostTaggedUser } from '../../users/entities/tagged-user.entity';
 
 @Entity('posts')
 export class Post {
@@ -25,10 +23,6 @@ export class Post {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
   user?: User;
-
-  @OneToMany(() => PostTaggedUser, (taggedUser) => taggedUser.post)
-  @JoinColumn()
-  taggedPeople?: PostTaggedUser[];
 
   @CreateDateColumn({
     type: Date,
